@@ -55,6 +55,7 @@ composer install
 
 ### Lancer le serveur Symfony
 
+Dans un invité de commande à la racine du projet
 ```bash
 symfony server:start
 ```
