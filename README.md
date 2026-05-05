@@ -53,6 +53,10 @@ Cette méthode permet de lancer rapidement le projet avec des données de démon
 composer install
 ```
 
+```bash
+php bin/console doctrine:fixtures:load
+```
+
 ### Lancer le serveur Symfony
 
 Dans un invité de commande à la racine du projet
@@ -132,7 +136,6 @@ DATABASE_URL="mysql://utilisateur:mot_de_passe@IP:3306/nom_base"
 composer install
 ```
 
----
 
 # Initialisation de la base de données
 
@@ -148,11 +151,30 @@ php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
 
-## Charger les DataFixtures (optionnel)
+## Si vous voulez les données de la BDD
 
+Mettre le fichier database.sql dans la VM de votre mariaDB, dans l'endroit ou se trouve votre fichier
 ```bash
-php bin/console doctrine:fixtures:load
+scp  ./database.sql 'utilisateur_VM'@'IP_VM':'chemin/vers/votre/dossier'
 ```
+
+### Explications
+
+| Paramètre | Description |
+|---|---|
+| utilisateur_VM | Nom de l’utilisateur de votre VM |
+| IP_VM | Adresse IP de la machine hébergeant MariaDB |
+| chemin/vers/votre/dossier | Chemin ou vous voulez déposer le fichier |
+
+Dans votre VM avec mariaDB
+```bash
+mysql -u utilisateur -p mot_de_passe dump > chemin/vers/votre/dossier/database.sql
+```
+
+| Paramètre | Description |
+|---|---|
+| utilisateur | Nom de l’utilisateur de votre utilisateur mariaDB |
+| mot_de_passe | Mot de passe de l'utilisateur mariaDB |
 
 ---
 
