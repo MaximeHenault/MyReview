@@ -53,13 +53,16 @@ Cette méthode permet de lancer rapidement le projet avec des données de démon
 composer install
 ```
 
+### Charger les fixtures
+
 ```bash
 php bin/console doctrine:fixtures:load
 ```
 
 ### Lancer le serveur Symfony
 
-Dans un invité de commande à la racine du projet
+Dans un invité de commande à la racine du projet :
+
 ```bash
 symfony server:start
 ```
@@ -98,6 +101,8 @@ sudo mariadb
 
 ```sql
 CREATE USER 'utilisateur'@'IP_MACHINE' IDENTIFIED BY 'mot_de_passe';
+GRANT ALL PRIVILEGES ON *.* TO 'utilisateur'@'IP_MACHINE';
+FLUSH PRIVILEGES;
 ```
 
 ### Explications
@@ -136,6 +141,7 @@ DATABASE_URL="mysql://utilisateur:mot_de_passe@IP:3306/nom_base"
 composer install
 ```
 
+---
 
 # Initialisation de la base de données
 
@@ -151,11 +157,16 @@ php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ```
 
-## Si vous voulez les données de la BDD
+---
 
-Mettre le fichier database.sql dans la VM de votre mariaDB, dans l'endroit ou se trouve votre fichier
+# Importer la base de données fournie (optionnel)
+
+## Copier le fichier `database.sql` sur la VM MariaDB
+
+Depuis votre machine locale :
+
 ```bash
-scp  ./database.sql 'utilisateur_VM'@'IP_VM':'chemin/vers/votre/dossier'
+scp ./database.sql utilisateur_VM@IP_VM:/chemin/vers/votre/dossier
 ```
 
 ### Explications
@@ -164,17 +175,25 @@ scp  ./database.sql 'utilisateur_VM'@'IP_VM':'chemin/vers/votre/dossier'
 |---|---|
 | utilisateur_VM | Nom de l’utilisateur de votre VM |
 | IP_VM | Adresse IP de la machine hébergeant MariaDB |
-| chemin/vers/votre/dossier | Chemin ou vous voulez déposer le fichier |
+| /chemin/vers/votre/dossier | Dossier où copier le fichier |
 
-Dans votre VM avec mariaDB
+---
+
+## Importer le dump SQL
+
+Depuis la VM hébergeant MariaDB :
+
 ```bash
-mysql -u utilisateur -p mot_de_passe dump > chemin/vers/votre/dossier/database.sql
+mysql -u utilisateur -p nom_base < /chemin/vers/votre/dossier/database.sql
 ```
+
+### Explications
 
 | Paramètre | Description |
 |---|---|
-| utilisateur | Nom de l’utilisateur de votre utilisateur mariaDB |
-| mot_de_passe | Mot de passe de l'utilisateur mariaDB |
+| utilisateur | Utilisateur MariaDB |
+| nom_base | Nom de la base de données |
+| /chemin/vers/votre/dossier/database.sql | Chemin du fichier SQL |
 
 ---
 
@@ -193,11 +212,3 @@ http://127.0.0.1:8000
 ```
 
 ---
-
-# Auteur
-
-Maxime Hénault
-
-- Portfolio : https://www.maximehenault.fr/
-- GitHub : https://github.com/MaximeHenault
-- LinkedIn : https://www.linkedin.com/in/maxime--henault
