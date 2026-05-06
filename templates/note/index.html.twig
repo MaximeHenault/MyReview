@@ -1,0 +1,191 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Note - {{ audiovisuel.titre }}{% endblock %}
+
+{% block body %}
+    {% include "topbar.html.twig" %}
+
+    <style>
+        .note-wrap {
+            width: min(900px, calc(100% - 2rem));
+            margin: 1.25rem auto 2rem;
+        }
+
+        .note-card {
+            padding: clamp(1rem, 2.6vw, 1.6rem);
+        }
+
+        .rating {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.65rem;
+            margin: 1rem 0;
+            padding: 0.8rem;
+            border-radius: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .stars {
+            display: inline-flex;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        .star-btn {
+            appearance: none;
+            background: transparent;
+            border: 0;
+            color: #4b5563;
+            width: 2rem;
+            height: 2rem;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.12s ease, color 0.12s ease;
+        }
+
+        .star-btn i {
+            font-size: 1.9rem;
+            line-height: 1;
+        }
+
+        .star-btn:hover,
+        .star-btn:focus-visible {
+            transform: translateY(-2px) scale(1.03);
+            color: #7ce7a8;
+            outline: none;
+        }
+
+        .star-btn.is-active {
+            color: #7ce7a8;
+        }
+
+        .rating-value-text {
+            color: #d7dde5;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .note-input {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f7f8f9;
+            border-radius: 0.75rem;
+            padding: 0.75rem 0.85rem;
+        }
+
+        .note-input:focus {
+            border-color: rgba(69, 211, 122, 0.7);
+            box-shadow: 0 0 0 0.2rem rgba(69, 211, 122, 0.2);
+            outline: none;
+        }
+    </style>
+
+    <main class="note-wrap">
+        <section class="mr-panel note-card">
+            <h1 class="mr-heading">Noter {{ audiovisuel.titre }}</h1>
+            <p class="mr-subheading">Donne ta note et ton ressenti en quelques secondes.</p>
+
+            {{ form_errors(noteForm) }}
+
+            {{ form_start(noteForm, { attr: { class: 'mr-form' } }) }}
+                {{ form_widget(noteForm.note) }}
+                <div class="rating">
+                    <div class="stars" data-rating-stars role="radiogroup" aria-label="Note sur 5">
+                        {% for i in 1..5 %}
+                            <button type="button" class="star-btn" data-star="{{ i }}" aria-label="Donner {{ i }} sur 5">
+                                <i class="bi bi-star" aria-hidden="true"></i>
+                            </button>
+                        {% endfor %}
+                    </div>
+                    <span class="rating-value-text" data-rating-text>Note: 0/5</span>
+                </div>
+
+                {{ form_errors(noteForm.note) }}
+
+                {{ form_row(noteForm.commentaire, { attr: { class: 'note-input', rows: 4, placeholder: 'Partage ton avis...' } }) }}
+
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                    <button type="submit" class="btn btn-primary">Enregistrer la note</button>
+                    <a href="{{ path('app_home') }}" class="btn btn-outline-light">Retour</a>
+                </div>
+            {{ form_end(noteForm) }}
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const starsContainer = document.querySelector('[data-rating-stars]');
+            const valueText = document.querySelector('[data-rating-text]');
+            const noteInput = document.getElementById('{{ noteForm.note.vars.id }}');
+
+            if (!starsContainer || !noteInput) {
+                return;
+            }
+
+            const starButtons = Array.from(starsContainer.querySelectorAll('.star-btn'));
+            let selectedValue = Number.parseFloat(noteInput.value || '0');
+            if (!Number.isFinite(selectedValue)) {
+                selectedValue = 0;
+            }
+            let previewValue = null;
+
+            const formatValue = (value) => Number.isInteger(value) ? value.toString() : value.toFixed(1);
+
+            const render = (value) => {
+                starButtons.forEach((button) => {
+                    const starIndex = Number.parseInt(button.dataset.star, 10);
+                    const icon = button.querySelector('i');
+                    const fullThreshold = starIndex;
+                    const halfThreshold = starIndex - 0.5;
+
+                    let iconClass = 'bi bi-star';
+                    if (value >= fullThreshold) {
+                        iconClass = 'bi bi-star-fill';
+                    } else if (value >= halfThreshold) {
+                        iconClass = 'bi bi-star-half';
+                    }
+
+                    icon.className = iconClass;
+                    button.classList.toggle('is-active', value >= halfThreshold);
+                });
+
+                if (valueText) {
+                    valueText.textContent = `Note: ${formatValue(value)}/5`;
+                }
+            };
+
+            const valueFromPointer = (starButton, event) => {
+                const starIndex = Number.parseInt(starButton.dataset.star, 10);
+                const rect = starButton.getBoundingClientRect();
+                const isLeftHalf = (event.clientX - rect.left) < rect.width / 2;
+                return isLeftHalf ? starIndex - 0.5 : starIndex;
+            };
+
+            starButtons.forEach((button) => {
+                button.addEventListener('mousemove', (event) => {
+                    previewValue = valueFromPointer(button, event);
+                    render(previewValue);
+                });
+
+                button.addEventListener('click', (event) => {
+                    selectedValue = valueFromPointer(button, event);
+                    previewValue = null;
+                    noteInput.value = formatValue(selectedValue);
+                    render(selectedValue);
+                });
+            });
+
+            starsContainer.addEventListener('mouseleave', () => {
+                previewValue = null;
+                render(selectedValue);
+            });
+
+            render(selectedValue);
+        })();
+    </script>
+{% endblock %}

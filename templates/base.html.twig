@@ -2,14 +2,253 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}MyReview{% endblock %}</title>
+        <link rel="icon" href="{{asset("/images/logo.png")}}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <style>
+            :root {
+                --mr-bg: #0f0f10;
+                --mr-surface: #17171a;
+                --mr-surface-soft: #202025;
+                --mr-text: #f4f4f6;
+                --mr-text-soft: #a6a7ad;
+                --mr-primary: #45d37a;
+                --mr-primary-strong: #2fbf66;
+                --mr-border: rgba(255, 255, 255, 0.08);
+                --mr-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            }
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+            body {
+                margin: 0;
+                min-height: 100vh;
+                font-family: "Manrope", sans-serif;
+                color: var(--mr-text);
+                background:
+                    radial-gradient(900px 420px at 88% -12%, rgba(51, 201, 118, 0.28), transparent 65%),
+                    radial-gradient(760px 350px at -8% 15%, rgba(69, 211, 122, 0.20), transparent 60%),
+                    linear-gradient(180deg, #121215 0%, #0c0c0f 100%);
+            }
+
+            h1, h2, h3, h4, h5, h6, .brand-font {
+                font-family: "Barlow", sans-serif;
+                letter-spacing: 0.02em;
+            }
+
+            .page-shell {
+                width: min(1200px, calc(100% - 2rem));
+                margin: 1.25rem auto 2rem;
+            }
+
+            .panel {
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+                border: 1px solid var(--mr-border);
+                border-radius: 1rem;
+                box-shadow: var(--mr-shadow);
+                backdrop-filter: blur(4px);
+            }
+
+            .btn-primary {
+                --bs-btn-bg: var(--mr-primary);
+                --bs-btn-border-color: var(--mr-primary);
+                --bs-btn-hover-bg: var(--mr-primary-strong);
+                --bs-btn-hover-border-color: var(--mr-primary-strong);
+                --bs-btn-active-bg: #239853;
+                --bs-btn-active-border-color: #239853;
+                --bs-btn-color: #1c150f;
+                --bs-btn-font-weight: 700;
+            }
+
+            .btn-outline-light {
+                --bs-btn-hover-color: #111;
+            }
+
+            .mr-page {
+                width: min(1200px, calc(100% - 2rem));
+                margin: 1.25rem auto 2rem;
+            }
+
+            .mr-panel {
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+                border: 1px solid var(--mr-border);
+                border-radius: 1rem;
+                box-shadow: var(--mr-shadow);
+                backdrop-filter: blur(4px);
+            }
+
+            .mr-heading {
+                font-size: clamp(1.45rem, 3vw, 2.3rem);
+                text-transform: uppercase;
+                margin-bottom: 0.4rem;
+            }
+
+            .mr-subheading {
+                color: var(--mr-text-soft);
+                margin-bottom: 1rem;
+            }
+
+            .mr-form-shell {
+                width: min(860px, 100%);
+                margin: 0 auto;
+                padding: clamp(1rem, 2.5vw, 1.5rem);
+            }
+
+            .mr-form {
+                display: grid;
+                gap: 0.35rem;
+            }
+
+            .mr-form .mb-3,
+            .mr-form .mb-4,
+            .mr-form .form-group {
+                margin-bottom: 0.9rem !important;
+            }
+
+            .mr-form-shell label {
+                font-weight: 700;
+                margin-bottom: 0.3rem;
+                color: #e8e8eb;
+            }
+
+            .mr-form-shell .form-label,
+            .mr-form-shell legend.col-form-label {
+                font-size: 0.95rem;
+                letter-spacing: 0.01em;
+            }
+
+            .mr-form-shell .form-control,
+            .mr-form-shell .form-select,
+            .mr-form-shell textarea {
+                background: rgba(255, 255, 255, 0.06);
+                color: #f8f8fa;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 0.75rem;
+                min-height: 2.75rem;
+            }
+
+            .mr-form-shell textarea.form-control {
+                min-height: 7.2rem;
+            }
+
+            .mr-form-shell .form-control::placeholder,
+            .mr-form-shell textarea::placeholder {
+                color: rgba(248, 248, 250, 0.58);
+            }
+
+            .mr-form-shell .form-control:focus,
+            .mr-form-shell .form-select:focus,
+            .mr-form-shell textarea:focus {
+                background: rgba(255, 255, 255, 0.08);
+                color: #fff;
+                border-color: rgba(69, 211, 122, 0.75);
+                box-shadow: 0 0 0 0.2rem rgba(69, 211, 122, 0.2);
+            }
+
+            .mr-form-shell .form-control.is-invalid,
+            .mr-form-shell .form-select.is-invalid,
+            .mr-form-shell textarea.is-invalid {
+                border-color: rgba(255, 112, 112, 0.85);
+                box-shadow: 0 0 0 0.18rem rgba(255, 112, 112, 0.18);
+            }
+
+            .mr-form-shell .invalid-feedback,
+            .mr-form-shell .form-error-message,
+            .mr-form-shell .text-danger {
+                color: #ff9b9b !important;
+                font-weight: 600;
+                margin-top: 0.35rem;
+            }
+
+            .mr-form-shell .form-text,
+            .mr-form-shell .form-help {
+                color: #b9bac0 !important;
+            }
+
+            .mr-form-shell .form-check {
+                padding: 0.7rem 0.85rem;
+                border-radius: 0.75rem;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.03);
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+            }
+
+            .mr-form-shell .form-check-input {
+                margin-top: 0;
+                border-color: rgba(255, 255, 255, 0.45);
+                background-color: rgba(255, 255, 255, 0.02);
+            }
+
+            .mr-form-shell .form-check-input:checked {
+                background-color: var(--mr-primary);
+                border-color: var(--mr-primary);
+            }
+
+            .mr-form-shell .form-check-label {
+                margin-bottom: 0;
+                font-weight: 600;
+                color: #ececf0;
+            }
+
+            .mr-form-shell .form-control[type="file"] {
+                padding: 0.35rem;
+                line-height: 1.35;
+            }
+
+            .mr-form-shell .form-control[type="file"]::file-selector-button {
+                margin-right: 0.65rem;
+                border: 0;
+                border-radius: 0.55rem;
+                background: rgba(69, 211, 122, 0.22);
+                color: #eafff3;
+                padding: 0.5rem 0.7rem;
+                font-weight: 700;
+                transition: background 0.15s ease;
+            }
+
+            .mr-form-shell .form-control[type="file"]:hover::file-selector-button {
+                background: rgba(69, 211, 122, 0.3);
+            }
+
+            .mr-link {
+                color: #d9fbe7;
+                text-decoration: none;
+                font-weight: 700;
+            }
+
+            .mr-link:hover {
+                color: #fff;
+                text-decoration: underline;
+                text-decoration-color: rgba(69, 211, 122, 0.65);
+                text-underline-offset: 0.2rem;
+            }
+
+            .pagination .page-link {
+                background: rgba(255, 255, 255, 0.05);
+                border-color: rgba(255, 255, 255, 0.1);
+                color: #e9eaed;
+            }
+
+            .pagination .page-item.active .page-link {
+                background: var(--mr-primary);
+                border-color: var(--mr-primary);
+                color: #102016;
+                font-weight: 700;
+            }
+
+            .pagination .page-item.disabled .page-link {
+                background: rgba(255, 255, 255, 0.03);
+                border-color: rgba(255, 255, 255, 0.06);
+                color: #777a83;
+            }
+        </style>
+        {% block stylesheets %}{% endblock %}
     </head>
     <body>
         {% block body %}{% endblock %}

@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% include "topbar.html.twig" %}
+
+    <style>
+        .mr-anime-hero {
+            padding: clamp(1.2rem, 3vw, 2rem);
+        }
+
+        .mr-anime-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            font-weight: 700;
+            margin-right: 0.4rem;
+        }
+
+        .mr-anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mr-anime-card {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(28, 28, 32, 0.95), rgba(15, 15, 18, 0.95));
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .mr-anime-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(69, 211, 122, 0.6);
+        }
+
+        .mr-anime-poster {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .mr-anime-body {
+            padding: 0.85rem;
+        }
+
+        .mr-anime-title {
+            margin: 0 0 0.25rem;
+            font-size: 1.02rem;
+        }
+
+        .mr-anime-desc {
+            color: var(--mr-text-soft);
+            margin-bottom: 0.55rem;
+            font-size: 0.85rem;
+            min-height: 2.3rem;
+        }
+
+        .mr-stars {
+            color: #9ff1bf;
+            margin-bottom: 0.7rem;
+            min-height: 1.2rem;
+        }
+
+        .mr-anime-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+    </style>
+
+    <main class="page-shell">
+        <section class="mr-panel mr-anime-hero">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                <div>
+                    <p class="mr-anime-chip mb-2"><i class="bi bi-lightning-fill"></i> Section Animes</p>
+                    <h1 class="mr-heading">Les animes les mieux notes</h1>
+                    <p class="mr-subheading mb-3">Classe tes arcs preferes, suis tes notes et construis ton top de saison.</p>
+                    <form method="post" action="{{ path('app_serieanime_add') }}" class="m-0">
+                        <input type="hidden" name="type_id" value="3">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Ajouter un anime</button>
+                    </form>
+                </div>
+                <div>
+                    <span class="mr-anime-chip"><i class="bi bi-stars"></i>{{ animes|length }} animes</span>
+                    <span class="mr-anime-chip"><i class="bi bi-star-fill"></i>Votes live</span>
+                </div>
+            </div>
+        </section>
+
+        {% if animes is empty %}
+            <section class="mr-panel text-center py-5 mt-3">
+                <h2 class="h4 mb-2">Aucun anime pour le moment</h2>
+                <p class="mr-subheading mb-3">Ajoute ton premier anime pour demarrer le classement.</p>
+            </section>
+        {% else %}
+            <section class="mr-anime-grid">
+                {% for anime in animes %}
+                    <article class="mr-anime-card">
+                        <img src="{{ anime.affiche }}" class="mr-anime-poster" alt="Affiche de {{ anime.titre }}">
+                        <div class="mr-anime-body">
+                            <h2 class="mr-anime-title">{{ anime.titre }}</h2>
+                            <p class="mr-anime-desc">{{ anime.description|default('Pas de description pour le moment.')|slice(0, 95) }}{% if anime.description and anime.description|length > 95 %}...{% endif %}</p>
+                            <div class="mr-stars">
+                                {% if anime.note_arrondie == 0 %}
+                                    Pas de note pour le moment
+                                {% else %}
+                                    {% for i in 1..5 %}
+                                        {% if i <= anime.note_arrondie %}
+                                            <i class="bi bi-star-fill"></i>
+                                        {% else %}
+                                            <i class="bi bi-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="mr-anime-actions">
+                                <a href="{{ path('app_anime_detail', { id: anime.id }) }}" class="btn btn-primary btn-sm">Details</a>
+                                <a href="{{ path('app_anime_edit', { id: anime.id }) }}" class="btn btn-outline-light btn-sm">Modifier</a>
+                                <form method="post" action="{{ path('app_anime_delete', { id: anime.id }) }}" class="m-0">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_anime_' ~ anime.id) }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer cet anime ?');">Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        <div class="mt-4">
+            {% include "pagination.html.twig" with { route: "app_anime" } %}
+        </div>
+    </main>
+{% endblock %}
+

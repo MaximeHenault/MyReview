@@ -1,0 +1,44 @@
+{% set current = page|default(1) %}
+{% set totalPages = pages|default(1) %}
+{% set currentRoute = route|default(app.request.attributes.get('_route')) %}
+{% set currentRouteParams = routeParams|default(app.request.attributes.get('_route_params')|default({})) %}
+{% set baseQuery = app.request.query.all %}
+{% set paginationParams = currentRouteParams|merge(baseQuery) %}
+
+{% if totalPages > 1 %}
+    <nav aria-label="Pagination" class="mt-2">
+        <ul class="pagination justify-content-center mb-0">
+            <li class="page-item {% if current <= 1 %}disabled{% endif %}">
+                <a class="page-link" href="{{ path(currentRoute, paginationParams|merge({ page: current > 1 ? current - 1 : 1 })) }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            {% set start = current - 2 %}
+            {% set end = current + 2 %}
+            {% if start < 1 %}
+                {% set end = end + (1 - start) %}
+                {% set start = 1 %}
+            {% endif %}
+            {% if end > totalPages %}
+                {% set start = start - (end - totalPages) %}
+                {% set end = totalPages %}
+            {% endif %}
+            {% if start < 1 %}
+                {% set start = 1 %}
+            {% endif %}
+
+            {% for i in start..end %}
+                <li class="page-item {% if i == current %}active{% endif %}">
+                    <a class="page-link" href="{{ path(currentRoute, paginationParams|merge({ page: i })) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            <li class="page-item {% if current >= totalPages %}disabled{% endif %}">
+                <a class="page-link" href="{{ path(currentRoute, paginationParams|merge({ page: current < totalPages ? current + 1 : totalPages })) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endif %}

@@ -46,7 +46,7 @@ class Audiovisuel
     /**
      * @var Collection<int, Saison>
      */
-    #[ORM\OneToMany(targetEntity: Saison::class, mappedBy: 'audiovisuel')]
+    #[ORM\OneToMany(targetEntity: Saison::class, mappedBy: 'audiovisuel', cascade: ['persist'], orphanRemoval: true)]
     private Collection $saisons;
 
     /**

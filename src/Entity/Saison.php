@@ -27,6 +27,12 @@ class Saison
     #[ORM\OneToMany(targetEntity: Episode::class, mappedBy: 'saison')]
     private Collection $episodes;
 
+    #[ORM\Column(length: 255)]
+    private ?string $titre = null;
+
+    #[ORM\Column]
+    private ?int $nb_episode = null;
+
     public function __construct()
     {
         $this->episodes = new ArrayCollection();
@@ -87,6 +93,30 @@ class Saison
                 $episode->setSaison(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTitre(): ?string
+    {
+        return $this->titre;
+    }
+
+    public function setTitre(string $titre): static
+    {
+        $this->titre = $titre;
+
+        return $this;
+    }
+
+    public function getNbEpisode(): ?int
+    {
+        return $this->nb_episode;
+    }
+
+    public function setNbEpisode(int $nb_episode): static
+    {
+        $this->nb_episode = $nb_episode;
 
         return $this;
     }

@@ -1,0 +1,264 @@
+<style>
+  .mr-topbar-wrap {
+    position: sticky;
+    top: 0.75rem;
+    z-index: 1030;
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0.75rem auto 0;
+  }
+
+  .mr-topbar {
+    background: linear-gradient(180deg, rgba(26, 26, 30, 0.93), rgba(16, 16, 18, 0.93));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+  }
+
+  .mr-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: "Barlow", sans-serif;
+    font-weight: 800;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .mr-brand img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+  }
+
+  .mr-brand-accent {
+    color: var(--mr-primary);
+  }
+
+  .mr-nav-link {
+    color: #d8d8dd;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.82rem;
+    border-radius: 999px;
+    padding: 0.5rem 0.9rem !important;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .mr-nav-link:hover,
+  .mr-nav-link:focus {
+    color: #fff;
+    background: rgba(69, 211, 122, 0.16);
+  }
+
+  .mr-search {
+    min-width: 220px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .mr-search::placeholder {
+    color: #b5b6bc;
+  }
+
+  .mr-search:focus {
+    border-color: rgba(69, 211, 122, 0.75);
+    box-shadow: 0 0 0 0.2rem rgba(69, 211, 122, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .mr-user-toggle {
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .mr-user-menu {
+    background: #1d1d22;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .mr-user-menu .dropdown-item {
+    color: #ececf0;
+  }
+
+  .mr-user-menu .dropdown-item:hover {
+    background: rgba(69, 211, 122, 0.2);
+    color: #fff;
+  }
+
+  .mr-search-wrap {
+    position: relative;
+  }
+
+  .mr-search-results {
+    position: absolute;
+    top: calc(100% + 0.45rem);
+    left: 0;
+    right: 0;
+    background: rgba(23, 23, 27, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.85rem;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1050;
+  }
+
+  .mr-search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.55rem 0.7rem;
+    text-decoration: none;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .mr-search-result-item:last-child {
+    border-bottom: 0;
+  }
+
+  .mr-search-result-item:hover {
+    background: rgba(69, 211, 122, 0.12);
+    color: #fff;
+  }
+
+  .mr-search-result-img {
+    width: 42px;
+    height: 62px;
+    border-radius: 0.35rem;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .mr-search-result-title {
+    font-size: 0.92rem;
+    line-height: 1.2;
+    font-weight: 600;
+  }
+
+  .mr-search-empty {
+    color: #c9c9cf;
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+</style>
+
+<div class="mr-topbar-wrap">
+  <nav class="navbar navbar-expand-lg mr-topbar px-3 py-2">
+    <a class="mr-brand" href="{{ path('app_home') }}">
+      <img src="{{ asset('/images/logo.png') }}" alt="MyReview">
+      <span>MY<span class="mr-brand-accent">REVIEW</span></span>
+    </a>
+
+    <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mrNav" aria-controls="mrNav" aria-expanded="false" aria-label="Navigation">
+      <i class="bi bi-list fs-2"></i>
+    </button>
+
+    <div class="collapse navbar-collapse mt-2 mt-lg-0" id="mrNav">
+      <ul class="navbar-nav align-items-lg-center gap-lg-1 me-auto mb-2 mb-lg-0 ms-lg-3">
+        <li class="nav-item">
+          <a class="nav-link mr-nav-link" href="{{ path('app_film') }}">Films</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mr-nav-link" href="{{ path('app_serie') }}">Series</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mr-nav-link" href="{{ path('app_anime') }}">Animes</a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+          <li class="nav-item">
+            <a class="nav-link mr-nav-link" href="{{ path('app_user_new') }}">Utilisateurs</a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <div class="d-flex me-lg-2 mb-2 mb-lg-0 mr-search-wrap">
+        <form class="d-flex w-100" role="search" onsubmit="return false;">
+          <input class="form-control mr-search" id="search" type="search" placeholder="Rechercher une oeuvre" aria-label="Search" autocomplete="off">
+        </form>
+        <div id="searchResults" class="mr-search-results"></div>
+      </div>
+
+      {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <div class="dropdown">
+          <a class="nav-link dropdown-toggle mr-user-toggle" href="#" id="mrUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle me-1"></i>{{ app.user.username }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end mr-user-menu" aria-labelledby="mrUserDropdown">
+            <li><a class="dropdown-item" href="#">Parametres</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_logout') }}">Deconnexion</a></li>
+          </ul>
+        </div>
+      {% else %}
+        <div class="dropdown">
+          <a class="nav-link dropdown-toggle mr-user-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Connexion
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end mr-user-menu">
+            <li><a class="dropdown-item" href="{{ path('app_register') }}">S'enregistrer</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_login') }}">Se connecter</a></li>
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+  </nav>
+</div>
+
+<script>
+  let timeout = null;
+  const searchInput = document.querySelector('#search');
+  const resultsBox = document.querySelector('#searchResults');
+  const escapeHtml = (value) => {
+      const div = document.createElement('div');
+      div.innerText = value ?? '';
+      return div.innerHTML;
+  };
+
+  searchInput.addEventListener('input', function(e) {
+      clearTimeout(timeout);
+      const query = e.target.value.trim();
+
+      if (!query) {
+          resultsBox.style.display = 'none';
+          resultsBox.innerHTML = '';
+          return;
+      }
+
+      timeout = setTimeout(() => {
+          fetch(`/search?q=${encodeURIComponent(query)}`)
+              .then(res => res.json())
+              .then(data => {
+                  if (!Array.isArray(data) || data.length === 0) {
+                      resultsBox.innerHTML = '<div class="mr-search-empty">Aucun resultat</div>';
+                      resultsBox.style.display = 'block';
+                      return;
+                  }
+
+                  resultsBox.innerHTML = data.map(item => `
+                    <a href="${item.url}" class="mr-search-result-item">
+                      <img src="${item.poster}" alt="${escapeHtml(item.title)}" class="mr-search-result-img">
+                      <span class="mr-search-result-title">${escapeHtml(item.title)}</span>
+                    </a>
+                  `).join('');
+
+                  resultsBox.style.display = 'block';
+              });
+      }, 300);
+  });
+
+  document.addEventListener('click', function(e) {
+      if (!e.target.closest('.mr-search-wrap')) {
+          resultsBox.style.display = 'none';
+      }
+  });
+
+</script>

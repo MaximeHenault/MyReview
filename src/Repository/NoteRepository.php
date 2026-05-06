@@ -16,28 +16,12 @@ class NoteRepository extends ServiceEntityRepository
         parent::__construct($registry, Note::class);
     }
 
-//    /**
-//     * @return Note[] Returns an array of Note objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('n.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function getNoteByAudiovisuelId(int $id)
+    {
+        $conn = $this->getEntityManager()->getConnection();
 
-//    public function findOneBySomeField($value): ?Note
-//    {
-//        return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        $sql = 'SELECT utilisateur.username as utilisateur, note.utilisateur_id as utilisateur_id, note.id as id, note, commentaire, date_creation FROM note INNER JOIN utilisateur ON note.utilisateur_id = utilisateur.id WHERE note.audiovisuel_id = ? ORDER BY date_creation DESC LIMIT 10';
+
+        return $conn->fetchAllAssociative($sql, [$id]);
+    }
 }

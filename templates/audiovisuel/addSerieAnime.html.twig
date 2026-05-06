@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {% if type_id == 2 %}Ajouter une serie{% elseif type_id == 3 %}Ajouter un anime{% else %}Editer un titre{% endif %}
+{% endblock %}
+
+{% block body %}
+    {% include "topbar.html.twig" %}
+
+    <style>
+        .mr-season-item {
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 0.85rem;
+            padding: 0.75rem;
+            margin-bottom: 0.7rem;
+            background: rgba(255, 255, 255, 0.03);
+        }
+    </style>
+
+    <main class="mr-page">
+        <section class="mr-panel mr-form-shell">
+            <h1 class="mr-heading">
+                {% if type_id == 2 %}Ajouter une serie{% elseif type_id == 3 %}Ajouter un anime{% else %}Editer le titre{% endif %}
+            </h1>
+            <p class="mr-subheading">Complete la fiche et ajoute les saisons si necessaire.</p>
+
+            {{ form_errors(serieanimeForm) }}
+
+            {{ form_start(serieanimeForm, { attr: { class: 'mr-form' } }) }}
+                {{ form_row(serieanimeForm.titre) }}
+                {{ form_row(serieanimeForm.description) }}
+                {{ form_row(serieanimeForm.realisateur) }}
+                {{ form_row(serieanimeForm.dateCreation) }}
+                {{ form_row(serieanimeForm.affiche) }}
+
+                <h2 class="h5 mt-4 mb-2">Saisons</h2>
+                <div id="saisons" data-prototype="{{ form_widget(serieanimeForm.saisons.vars.prototype)|e('html_attr') }}">
+                    {% for saisonForm in serieanimeForm.saisons %}
+                        <div class="mr-season-item saison-item">
+                            {{ form_row(saisonForm.numero) }}
+                            {{ form_row(saisonForm.titre) }}
+                            {{ form_row(saisonForm.nbEpisode) }}
+                            <button type="button" class="remove-saison btn btn-outline-danger btn-sm">Supprimer</button>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                    <button type="button" id="add-saison" class="btn btn-outline-light">Ajouter une saison</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    {% if type_id == 2 %}
+                        <a class="btn btn-outline-light" href="{{ path('app_serie') }}">Retour aux series</a>
+                    {% else %}
+                        <a class="btn btn-outline-light" href="{{ path('app_anime') }}">Retour aux animes</a>
+                    {% endif %}
+                </div>
+            {{ form_end(serieanimeForm) }}
+        </section>
+    </main>
+
+    <script>
+        const collectionHolder = document.querySelector('#saisons');
+        const addButton = document.querySelector('#add-saison');
+
+        if (collectionHolder && addButton) {
+            let index = collectionHolder.querySelectorAll('.saison-item').length;
+
+            const addDeleteButton = (item) => {
+                const removeButton = item.querySelector('.remove-saison');
+                if (removeButton) {
+                    removeButton.addEventListener('click', () => item.remove());
+                }
+            };
+
+            collectionHolder.querySelectorAll('.saison-item').forEach(addDeleteButton);
+
+            addButton.addEventListener('click', () => {
+                const prototype = collectionHolder.dataset.prototype;
+                const newForm = prototype.replace(/__name__/g, index);
+
+                const item = document.createElement('div');
+                item.classList.add('mr-season-item', 'saison-item');
+                item.innerHTML = newForm + '<button type="button" class="remove-saison btn btn-outline-danger btn-sm">Supprimer</button>';
+                collectionHolder.appendChild(item);
+                addDeleteButton(item);
+                index++;
+            });
+        }
+    </script>
+{% endblock %}

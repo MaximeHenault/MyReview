@@ -1,0 +1,219 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% include "topbar.html.twig" %}
+
+    <style>
+        .mr-hero {
+            position: relative;
+            overflow: hidden;
+            padding: clamp(1.2rem, 3vw, 2rem);
+        }
+
+        .mr-hero::before {
+            content: "";
+            position: absolute;
+            inset: -25% auto auto -15%;
+            width: 300px;
+            height: 300px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(69, 211, 122, 0.35), transparent 65%);
+            pointer-events: none;
+        }
+
+        .mr-hero-title {
+            font-size: clamp(1.7rem, 4.2vw, 3rem);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            line-height: 1.05;
+        }
+
+        .mr-highlight {
+            color: var(--mr-primary);
+        }
+
+        .mr-hero-lead {
+            color: var(--mr-text-soft);
+            max-width: 70ch;
+            margin-bottom: 1.2rem;
+        }
+
+        .mr-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.78rem;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-right: 0.4rem;
+        }
+
+        .mr-section-title {
+            font-size: 1.55rem;
+            text-transform: uppercase;
+            margin: 1.6rem 0 0.9rem;
+        }
+
+        .mr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+            gap: 1rem;
+        }
+
+        .mr-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(180deg, rgba(30, 30, 34, 0.95), rgba(17, 17, 20, 0.95));
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            animation: mr-rise 0.35s ease both;
+        }
+
+        .mr-card:nth-child(2) { animation-delay: 0.05s; }
+        .mr-card:nth-child(3) { animation-delay: 0.1s; }
+        .mr-card:nth-child(4) { animation-delay: 0.15s; }
+        .mr-card:nth-child(5) { animation-delay: 0.2s; }
+
+        .mr-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(69, 211, 122, 0.6);
+        }
+
+        .mr-poster {
+            width: 100%;
+            height: 330px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .mr-card-body {
+            padding: 0.85rem;
+        }
+
+        .mr-title {
+            margin: 0 0 0.3rem;
+            font-size: 1.06rem;
+            line-height: 1.2;
+        }
+
+        .mr-meta {
+            color: var(--mr-text-soft);
+            font-size: 0.88rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .mr-rating {
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            color: #ffc46a;
+            min-height: 1.2rem;
+        }
+
+        .mr-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .mr-empty {
+            color: var(--mr-text-soft);
+            text-align: center;
+            padding: 2.4rem 1rem;
+        }
+
+        @keyframes mr-rise {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <main class="page-shell">
+        <section class="mr-hero panel">
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 position-relative">
+                <div>
+                    <p class="mr-chip mb-2"><i class="bi bi-fire"></i> Communauté active</p>
+                    <h1 class="mr-hero-title">
+                        Note tes <span class="mr-highlight">films</span> favoris
+                    </h1>
+                    <p class="mr-hero-lead">
+                        Decouvre les oeuvres les mieux notees, ajoute tes critiques et fais monter le classement de ta prochaine obsession audiovisuelle.
+                    </p>
+                    <a href="{{ path('app_film_add') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Ajouter un film
+                    </a>
+                </div>
+                <div class="d-flex gap-2 flex-wrap justify-content-lg-end">
+                    <span class="mr-chip"><i class="bi bi-camera-reels"></i>{{ total }} films</span>
+                    <span class="mr-chip"><i class="bi bi-star-fill"></i>Top votes</span>
+                    <span class="mr-chip"><i class="bi bi-chat-square-text"></i>Avis users</span>
+                </div>
+            </div>
+        </section>
+
+        <h2 class="mr-section-title">Catalogue Films</h2>
+
+        {% if films is empty %}
+            <section class="panel mr-empty">
+                <h3 class="mb-2">Aucun film pour le moment</h3>
+                <p class="mb-3">Commence par ajouter ta premiere fiche film et lance la collection.</p>
+                <a href="{{ path('app_film_add') }}" class="btn btn-primary">Ajouter un film</a>
+            </section>
+        {% else %}
+            <section class="mr-grid">
+                {% for film in films %}
+                    <article class="mr-card">
+                        <img src="{{ film.affiche }}" class="mr-poster" alt="Affiche du film {{ film.titre }}">
+                        <div class="mr-card-body">
+                            <h3 class="mr-title">{{ film.titre }}</h3>
+                            <p class="mr-meta">
+                                <i class="bi bi-clock-history me-1"></i>{{ film.duree // 60 }}h{{ "%02d"|format(film.duree % 60) }}
+                            </p>
+                            <div class="mr-rating">
+                                {% if film.note_arrondie == 0 %}
+                                    Pas de note pour le moment
+                                {% else %}
+                                    {% for i in 1..5 %}
+                                        {% if i <= film.note_arrondie %}
+                                            <i class="bi bi-star-fill"></i>
+                                        {% elseif film.note_arrondie >= i - 0.5 %}
+                                            <i class="bi bi-star-half"></i>
+                                        {% else %}
+                                            <i class="bi bi-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    ({{ film.nb_note }})
+                                {% endif %}
+                            </div>
+
+                            <div class="mr-actions">
+                                <a href="{{ path('app_film_detail', { id: film.id }) }}" class="btn btn-primary btn-sm">Details</a>
+                                <a href="{{ path('app_film_edit', { id: film.id }) }}" class="btn btn-outline-light btn-sm">Modifier</a>
+                                <form method="post" action="{{ path('app_film_delete', { id: film.id }) }}" class="m-0">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_film_' ~ film.id) }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer ce film ?');">Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        <div class="mt-4">
+            {% include "pagination.html.twig" with { route: "app_film" } %}
+        </div>
+    </main>
+{% endblock %}
+

@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+    {% include "topbar.html.twig" %}
+
+    <main class="mr-page">
+        <section class="mr-panel mr-form-shell" style="max-width: 560px;">
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="alert alert-info">
+                    Connecte en tant que {{ app.user.userIdentifier }}.
+                    <a class="mr-link" href="{{ logout_path() }}">Se deconnecter</a>
+                </div>
+            {% endif %}
+
+            <h1 class="mr-heading">Connexion</h1>
+            <p class="mr-subheading">Retrouve ton espace de notes et ton historique.</p>
+
+            <form method="post" class="mr-form">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Email</label>
+                    <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+                </div>
+
+                <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                    <button class="btn btn-primary" type="submit">Se connecter</button>
+                    <a href="{{ path('app_register') }}" class="btn btn-outline-light">Creer un compte</a>
+                </div>
+            </form>
+        </section>
+    </main>
+{% endblock %}

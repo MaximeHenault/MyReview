@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% include "topbar.html.twig" %}
+
+    <style>
+        .mr-media-hero {
+            padding: clamp(1.2rem, 3vw, 2rem);
+        }
+
+        .mr-media-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            font-weight: 700;
+            margin-right: 0.4rem;
+        }
+
+        .mr-media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mr-media-card {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(28, 28, 32, 0.95), rgba(15, 15, 18, 0.95));
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .mr-media-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(69, 211, 122, 0.6);
+        }
+
+        .mr-media-poster {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .mr-media-body {
+            padding: 0.85rem;
+        }
+
+        .mr-media-title {
+            margin: 0 0 0.25rem;
+            font-size: 1.02rem;
+        }
+
+        .mr-media-meta {
+            color: var(--mr-text-soft);
+            margin-bottom: 0.55rem;
+            font-size: 0.85rem;
+        }
+
+        .mr-stars {
+            color: #9ff1bf;
+            margin-bottom: 0.7rem;
+            min-height: 1.2rem;
+        }
+
+        .mr-media-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+    </style>
+
+    <main class="page-shell">
+        <section class="mr-panel mr-media-hero">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                <div>
+                    <p class="mr-media-chip mb-2"><i class="bi bi-tv-fill"></i> Univers Series</p>
+                    <h1 class="mr-heading">Les series les mieux notees</h1>
+                    <p class="mr-subheading mb-3">Suis tes saisons, compare les notes et garde tes meilleures decouvertes sous la main.</p>
+                    <form method="post" action="{{ path('app_serieanime_add') }}" class="m-0">
+                        <input type="hidden" name="type_id" value="2">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Ajouter une serie</button>
+                    </form>
+                </div>
+                <div>
+                    <span class="mr-media-chip"><i class="bi bi-collection-play"></i>{{ series|length }} series</span>
+                    <span class="mr-media-chip"><i class="bi bi-star-fill"></i>Notes live</span>
+                </div>
+            </div>
+        </section>
+
+        {% if series is empty %}
+            <section class="mr-panel text-center py-5 mt-3">
+                <h2 class="h4 mb-2">Aucune serie pour le moment</h2>
+                <p class="mr-subheading mb-3">Commence la base avec ta premiere serie.</p>
+            </section>
+        {% else %}
+            <section class="mr-media-grid">
+                {% for serie in series %}
+                    <article class="mr-media-card">
+                        <img src="{{ serie.affiche }}" class="mr-media-poster" alt="Affiche de {{ serie.titre }}">
+                        <div class="mr-media-body">
+                            <h2 class="mr-media-title">{{ serie.titre }}</h2>
+                            <p class="mr-media-meta">{{ serie.nb_saisons ?? 0 }} saisons · {{ serie.nb_episodes ?? 0 }} episodes</p>
+                            <div class="mr-stars">
+                                {% if serie.note_arrondie == 0 %}
+                                    Pas de note pour le moment
+                                {% else %}
+                                    {% for i in 1..5 %}
+                                        {% if i <= serie.note_arrondie %}
+                                            <i class="bi bi-star-fill"></i>
+                                        {% else %}
+                                            <i class="bi bi-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="mr-media-actions">
+                                <a href="{{ path('app_serie_detail', { id: serie.id }) }}" class="btn btn-primary btn-sm">Details</a>
+                                <a href="{{ path('app_serie_edit', { id: serie.id }) }}" class="btn btn-outline-light btn-sm">Modifier</a>
+                                <form method="post" action="{{ path('app_serie_delete', { id: serie.id }) }}" class="m-0">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_serie_' ~ serie.id) }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer cette serie ?');">Supprimer</button>
+                                </form>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        <div class="mt-4">
+            {% include "pagination.html.twig" with { route: "app_serie" } %}
+        </div>
+    </main>
+{% endblock %}
+

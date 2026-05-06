@@ -1,0 +1,7 @@
+User :
+
+test@gmail.com
+test1234
+
+myreview.authentification@gmail.com
+MyReviewAdmin

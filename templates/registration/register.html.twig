@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+    {% include "topbar.html.twig" %}
+
+    <main class="mr-page">
+        <section class="mr-panel mr-form-shell" style="max-width: 620px;">
+            <h1 class="mr-heading">Creer un compte</h1>
+            <p class="mr-subheading">Inscris-toi pour noter et suivre tes films, series et animes.</p>
+
+            {{ form_errors(registrationForm) }}
+
+            {{ form_start(registrationForm, { attr: { class: 'mr-form' } }) }}
+                {{ form_row(registrationForm.username) }}
+                {{ form_row(registrationForm.email) }}
+                {{ form_row(registrationForm.plainPassword) }}
+
+
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                    <button type="submit" class="btn btn-primary">S'inscrire</button>
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-light">J'ai deja un compte</a>
+                </div>
+            {{ form_end(registrationForm) }}
+        </section>
+    </main>
+{% endblock %}

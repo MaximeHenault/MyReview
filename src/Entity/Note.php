@@ -14,8 +14,8 @@ class Note
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $note = null;
+    #[ORM\Column(type: Types::FLOAT)]
+    private ?float $note = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $commentaire = null;
@@ -34,12 +34,12 @@ class Note
         return $this->id;
     }
 
-    public function getNote(): ?int
+    public function getNote(): ?float
     {
         return $this->note;
     }
 
-    public function setNote(int $note): static
+    public function setNote(float $note): static
     {
         $this->note = $note;
 
@@ -90,7 +90,6 @@ class Note
     public function setUtilisateur(?Utilisateur $utilisateur): static
     {
         $this->utilisateur = $utilisateur;
-
         return $this;
     }
 }

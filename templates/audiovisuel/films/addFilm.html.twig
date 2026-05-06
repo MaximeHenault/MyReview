@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un film{% endblock %}
+
+{% block body %}
+    {% include "topbar.html.twig" %}
+
+    <main class="mr-page">
+        <section class="mr-panel mr-form-shell">
+            <h1 class="mr-heading">Ajouter un film</h1>
+            <p class="mr-subheading">Renseigne les infos principales pour publier rapidement une nouvelle fiche.</p>
+
+            {{ form_errors(filmForm) }}
+
+            {{ form_start(filmForm, { attr: { class: 'mr-form' } }) }}
+                {{ form_row(filmForm.titre) }}
+                {{ form_row(filmForm.description) }}
+                {{ form_row(filmForm.realisateur) }}
+                {{ form_row(filmForm.dateCreation) }}
+                {{ form_row(filmForm.duree) }}
+                {{ form_row(filmForm.affiche) }}
+
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <a class="btn btn-outline-light" href="{{ path('app_film') }}">Retour aux films</a>
+                </div>
+            {{ form_end(filmForm) }}
+        </section>
+    </main>
+{% endblock %}
