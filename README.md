@@ -19,8 +19,6 @@ L’application permet notamment :
 | PHP | 8.4 |
 | Symfony | 8.0 |
 | MariaDB | 11.x |
-| Composer | dernière version |
-| Doctrine ORM | intégré à Symfony |
 
 ---
 
