@@ -104,7 +104,7 @@ FLUSH PRIVILEGES;
 Créer un fichier :
 
 ```txt
-.env.local
+.env
 ```
 
 Puis ajouter :
