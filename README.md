@@ -1,14 +1,24 @@
 # MyReview
 
-MyReview est une application web développée avec Symfony permettant la gestion et la consultation d’avis et de contenus multimédias.
+MyReview est une application web développée avec Symfony permettant la gestion et la consultation d’avis ainsi que de contenus multimédias (films, séries, animés, etc.).
+
+L’application permet notamment :
+
+- la gestion des utilisateurs,
+- la publication d’avis,
+- la notation de contenus,
+- la consultation de fiches multimédias,
+- l’administration de la plateforme.
 
 ---
 
 # Technologies utilisées
 
-- PHP : version ...
-- Symfony : version ...
-- MariaDB : version ...
+| Technologie | Version |
+|---|---|
+| PHP | 8.4 |
+| Symfony | 8.0 |
+| MariaDB | 11.x |
 
 ---
 
@@ -20,7 +30,7 @@ Avant de commencer, assurez-vous d’avoir installé :
 - Composer
 - Symfony CLI
 - Git
-- MariaDB (optionnel selon le mode d’installation)
+- MariaDB
 
 ---
 
@@ -35,51 +45,21 @@ cd MyReview
 
 ---
 
-# Lancement du projet
+# Installation des dépendances
 
-Deux options sont disponibles :
-
----
-
-# Option 1 — Utilisation avec DataFixtures (sans configuration manuelle de BDD)
-
-Cette méthode permet de lancer rapidement le projet avec des données de démonstration.
-
-## Étapes
-
-### Installer les dépendances
+## 2. Installer les dépendances PHP
 
 ```bash
 composer install
 ```
 
-### Charger les fixtures
-
-```bash
-php bin/console doctrine:fixtures:load
-```
-
-### Lancer le serveur Symfony
-
-Dans un invité de commande à la racine du projet :
-
-```bash
-symfony server:start
-```
-
-### Accéder au projet
-
-Ouvrez votre navigateur à l’adresse suivante :
-
-```txt
-http://127.0.0.1:8000
-```
+Cette commande installe automatiquement toutes les dépendances nécessaires au projet.
 
 ---
 
-# Option 2 — Utilisation avec MariaDB
+# Configuration de la base de données
 
-## Installation de MariaDB
+## 3. Installation de MariaDB
 
 ### Debian / Ubuntu
 
@@ -100,104 +80,96 @@ sudo mariadb
 ## Création d’un utilisateur MariaDB
 
 ```sql
-CREATE USER 'utilisateur'@'IP_MACHINE' IDENTIFIED BY 'mot_de_passe';
-GRANT ALL PRIVILEGES ON *.* TO 'utilisateur'@'IP_MACHINE';
+CREATE USER 'utilisateur'@'%' IDENTIFIED BY 'mot_de_passe';
+
+GRANT ALL PRIVILEGES ON *.* TO 'utilisateur'@'%';
+
 FLUSH PRIVILEGES;
 ```
 
-### Explications
+---
+
+## Explications
 
 | Paramètre | Description |
 |---|---|
 | utilisateur | Nom de l’utilisateur MariaDB |
-| IP_MACHINE | Adresse IP de la machine hébergeant Symfony |
+| % | Autorise les connexions depuis toutes les machines |
 | mot_de_passe | Mot de passe du compte MariaDB |
 
 ---
 
-# Configuration du fichier `.env`
+# Configuration du fichier `.env.local`
 
-Modifier les informations de connexion à la base de données dans le fichier `.env`.
+Créer un fichier :
 
-Exemple :
-
-```env
-DATABASE_URL="mysql://utilisateur:mot_de_passe@IP:3306/nom_base"
+```txt
+.env
 ```
 
-### Paramètres
+Puis ajouter :
 
-| Variable | Description |
-|---|---|
-| IP | Adresse IP du serveur MariaDB |
-| utilisateur | Utilisateur créé précédemment |
-| mot_de_passe | Mot de passe de l’utilisateur |
+```env
+DATABASE_URL="mysql://utilisateur:mot_de_passe@127.0.0.1:3306/myreview?serverVersion=mariadb-11.0.2"
+```
 
 ---
 
-# Installation des dépendances
+## Paramètres de connexion
 
-```bash
-composer install
-```
+| Variable | Description |
+|---|---|
+| utilisateur | Utilisateur MariaDB |
+| mot_de_passe | Mot de passe MariaDB |
+| 127.0.0.1 | Adresse du serveur MariaDB |
+| 3306 | Port MariaDB |
+| myreview | Nom de la base de données |
 
 ---
 
 # Initialisation de la base de données
 
-## Créer la base de données
+## 4. Création de la base
 
 ```bash
 php bin/console doctrine:database:create
 ```
 
-## Exécuter les migrations
+---
+
+## 5. Exécution des migrations
 
 ```bash
 php bin/console doctrine:migrations:migrate
 ```
 
+Cette commande crée automatiquement toutes les tables nécessaires au fonctionnement de l’application.
+
 ---
 
-# Importer la base de données fournie (optionnel)
+# Chargement des données de démonstration
 
-## Copier le fichier `database.sql` sur la VM MariaDB
+## 6. Charger les fixtures
 
-Depuis votre machine locale :
+Les fixtures permettent de générer automatiquement des données de test :
+
+- utilisateurs,
+- avis,
+- contenus multimédias,
+- notes,
+- catégories.
 
 ```bash
-scp ./database.sql utilisateur_VM@IP_VM:/chemin/vers/votre/dossier
+php bin/console doctrine:fixtures:load
 ```
-
-### Explications
-
-| Paramètre | Description |
-|---|---|
-| utilisateur_VM | Nom de l’utilisateur de votre VM |
-| IP_VM | Adresse IP de la machine hébergeant MariaDB |
-| /chemin/vers/votre/dossier | Dossier où copier le fichier |
 
 ---
 
-## Importer le dump SQL
+# Lancement du projet
 
-Depuis la VM hébergeant MariaDB :
+## 7. Démarrer le serveur Symfony
 
-```bash
-mysql -u utilisateur -p nom_base < /chemin/vers/votre/dossier/database.sql
-```
-
-### Explications
-
-| Paramètre | Description |
-|---|---|
-| utilisateur | Utilisateur MariaDB |
-| nom_base | Nom de la base de données |
-| /chemin/vers/votre/dossier/database.sql | Chemin du fichier SQL |
-
----
-
-# Lancer le serveur Symfony
+Depuis la racine du projet :
 
 ```bash
 symfony server:start
@@ -205,10 +177,64 @@ symfony server:start
 
 ---
 
-# Accéder au projet
+# Accès à l’application
+
+Une fois le serveur lancé, ouvrez votre navigateur à l’adresse suivante :
 
 ```txt
 http://127.0.0.1:8000
 ```
+
+---
+
+# Commandes utiles
+
+| Commande | Description |
+|---|---|
+| `composer install` | Installer les dépendances |
+| `symfony server:start` | Démarrer le serveur Symfony |
+| `php bin/console doctrine:database:create` | Créer la base de données |
+| `php bin/console doctrine:migrations:migrate` | Exécuter les migrations |
+| `php bin/console doctrine:fixtures:load` | Charger les données de démonstration |
+| `php bin/console cache:clear` | Vider le cache Symfony |
+
+---
+
+# Structure du projet
+
+| Dossier | Description |
+|---|---|
+| `src/` | Code source de l’application |
+| `templates/` | Fichiers Twig |
+| `public/` | Fichiers publics |
+| `migrations/` | Migrations Doctrine |
+| `src/DataFixtures/` | Fixtures Doctrine |
+| `config/` | Configuration Symfony |
+
+---
+
+# Comptes de démonstration
+
+## SuperAdmin
+
+| Email | Mot de passe |
+|---|---|
+| utilisateur_super_admin@example.com | password_super_admin |
+
+---
+
+## Admin
+
+| Email | Mot de passe |
+|---|---|
+| utilisateur_admin@example.com | password_admin |
+
+---
+
+## Note
+
+| Email | Mot de passe |
+|---|---|
+| utilisateur_note@example.com | password_note |
 
 ---
