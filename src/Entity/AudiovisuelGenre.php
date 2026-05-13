@@ -32,7 +32,6 @@ class AudiovisuelGenre
     public function setAudiovisuel(?Audiovisuel $audiovisuel): static
     {
         $this->audiovisuel = $audiovisuel;
-
         return $this;
     }
 
