@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\AudiovisuelRepository;
 use App\Repository\NoteRepository;
+use App\Repository\SaisonRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Audiovisuel;
@@ -17,7 +18,6 @@ use App\Entity\Saison;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-
 
 final class AudiovisuelController extends AbstractController
 {
@@ -161,7 +161,7 @@ final class AudiovisuelController extends AbstractController
     }
 
     #[Route('/serie/{id}', name: 'app_serie_detail')]
-    public function getSerieDetail(AudiovisuelRepository $audiovisuelRepository, NoteRepository $noteRepository, Saison $saisonRepository, int $id): Response
+    public function getSerieDetail(AudiovisuelRepository $audiovisuelRepository, NoteRepository $noteRepository, SaisonRepository $saisonRepository, int $id): Response
     {
         $audiovisuel = $audiovisuelRepository->getAudiovisuelById($id);
         $note = $noteRepository->getNoteByAudiovisuelId($id);
